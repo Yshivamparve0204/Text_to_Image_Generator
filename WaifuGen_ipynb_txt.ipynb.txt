@@ -1,0 +1,104 @@
+{
+  "metadata": {
+    "kernelspec": {
+      "language": "python",
+      "display_name": "Python 3",
+      "name": "python3"
+    },
+    "language_info": {
+      "name": "python",
+      "version": "3.7.12",
+      "mimetype": "text/x-python",
+      "codemirror_mode": {
+        "name": "ipython",
+        "version": 3
+      },
+      "pygments_lexer": "ipython3",
+      "nbconvert_exporter": "python",
+      "file_extension": ".py"
+    },
+    "colab": {
+      "provenance": [],
+      "private_outputs": true
+    },
+    "accelerator": "GPU",
+    "gpuClass": "standard"
+  },
+  "nbformat_minor": 0,
+  "nbformat": 4,
+  "cells": [
+    {
+      "cell_type": "code",
+      "source": [
+        "import torch\n",
+        "import uuid\n",
+        "from diffusers import StableDiffusionPipeline, DPMSolverMultistepScheduler\n",
+        "\n",
+        "#variables\n",
+        "device_type = \"cuda\"\n",
+        "model_id = \"hakurei/waifu-diffusion\"\n",
+        "\n",
+        "# Use the DPMSolverMultistepScheduler (DPM-Solver++) scheduler here instead\n",
+        "pipe = StableDiffusionPipeline.from_pretrained(model_id, torch_dtype=torch.float16)\n",
+        "pipe.scheduler = DPMSolverMultistepScheduler.from_config(pipe.scheduler.config)\n",
+        "pipe = pipe.to(device_type)\n",
+        "#prompt\n",
+        "prompt = \"1boy, finely detailed, best quality, cute, highres, black hair, anime, blue eyes, teen, beautiful eyes, detail, summer, old japanese house, lighting, black kimono flower pattern\"\n",
+        "\n",
+        "negative_prompt = \"nsfw, lowres, bad anatomy, bad hands, text, error, missing fingers, extra digit, fewer digits, cropped, worst quality, low quality, normal quality, jpeg artifacts, signature, watermark, username, blurry,missing fingers,bad hands,missing arms, long neck, Humpbacked,shadow,long body, Abnormal fingers\"\n",
+        "#image gen\n",
+        "image = pipe(prompt,\n",
+        "                 negative_prompt=negative_prompt, \n",
+        "                 width=600,\n",
+        "                 height=800,\n",
+        "                 guidance_scale=12,\n",
+        "                 num_inference_steps=60).images\n",
+        "for i in image:\n",
+        "    i.save(\"drive/MyDrive/Images/\"+str(uuid.uuid4().hex[:8])+\".png\")"
+      ],
+      "metadata": {
+        "_kg_hide-output": true,
+        "execution": {
+          "iopub.status.busy": "2023-01-18T13:41:59.584365Z",
+          "iopub.execute_input": "2023-01-18T13:41:59.584753Z"
+        },
+        "trusted": true,
+        "id": "gaLVhia6IHGq"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [],
+      "metadata": {
+        "id": "PbXSqzAxcbHA"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "!pip install transformers diffusers urllib3 accelerate"
+      ],
+      "metadata": {
+        "id": "g0russDTIHG1"
+      },
+      "execution_count": null,
+      "outputs": []
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "from google.colab import drive\n",
+        "drive.mount('/content/drive')"
+      ],
+      "metadata": {
+        "id": "M4izMAMmiq9M"
+      },
+      "execution_count": null,
+      "outputs": []
+    }
+  ]
+}
